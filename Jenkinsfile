@@ -27,4 +27,7 @@ pipeline {
     }
     post {
         failure {
-            sh 'docker rm -f mynginx
+            sh 'docker rm -f mynginxprodcontainer'
+        }
+    }
+}
