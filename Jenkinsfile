@@ -1,18 +1,21 @@
-node('docker') {
-    def ngxImage = 'admintuts/nginx:1.19.6-rtmp-geoip2-alpine'
-    stage('Git Checkout') {
-        git credentialsId: 'git-hub-credentials', url: 'https://github.com/sceptic30/nginx-rtmp-geoip2-alpine'
-    }
-    stage('Build Docker Image') {
-        sh "docker build . -t ${ngxImage}"
-    }
-    stage('Test Nginx Image On Staging Server') {
-        def dockerRun = "docker run -p 8080:80 -d --name nginx-test ${ngxImage}"
-        sshagent(['remote-server-ssh-credentials']) {
-            sh "ssh -o StrictHostKeyChecking=no root@admintuts.net ${dockerRun}"
-            sh 'ssh -o StrictHostKeyChecking=no root@admintuts.net curl -I http://admintuts.net:8080'
-            sh 'ssh -o StrictHostKeyChecking=no root@admintuts.net docker stop nginx-test'
-            sh 'ssh -o StrictHostKeyChecking=no root@admintuts.net docker rm nginx-test'
+pipeline {
+    agent any
+
+    stages {
+        stage('Build nginx') {
+            steps {
+                sh 'docker build -t nginx-build -f Dockerfile.build .'
+            }
+        }
+        stage('Create production container') {
+            steps {
+                sh 'docker build -t nginx-production -f Dockerfile.production .'
+            }
+        }
+        stage('Run container') {
+            steps {
+                sh 'docker run -d --name nginx -p 80:80 nginx-production'
+            }
         }
     }
 }
