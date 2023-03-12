@@ -1,22 +1,20 @@
 pipeline {
-    agent {
-        docker {
-            image 'ubuntu:latest'
-            label 'docker'
-        }
-    }
+    agent any
+
     stages {
-        stage('Checkout') {
+        stage('Build nginx') {
             steps {
-                checkout scm
+                sh 'docker build -t nginx-build -f Dockerfile.build .'
             }
         }
-        stage('Build') {
+        stage('Create production container') {
             steps {
-                sh 'apt-get update && apt-get install -y build-essential wget zlib1g-dev libpcre3-dev libssl-dev'
-                sh 'wget http://nginx.org/download/nginx-1.20.1.tar.gz'
-                sh 'tar -xvzf nginx-1.20.1.tar.gz'
-                sh 'cd nginx-1.20.1 && ./configure --with-http_ssl_module && make && make install'
+                sh 'docker build -t nginx-production -f Dockerfile.production .'
+            }
+        }
+        stage('Run container') {
+            steps {
+                sh 'docker run -d --name nginx -p 80:80 nginx-production'
             }
         }
     }
