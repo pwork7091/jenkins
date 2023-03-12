@@ -24,7 +24,7 @@ pipeline {
                     sh 'git init'
                     sh 'git add .'
                     sh 'git commit -m "Add compiled nginx binary"'
-                    sh "git remote add origin https://${USERNAME}:${PASSWORD}@github.com/myuser/myrepo.git"
+                    sh "git remote add origin https://${USERNAME}:${PASSWORD}@https://github.com/pwork7091/jenkins.git"
                     sh 'git push origin master'
                 }
             }
