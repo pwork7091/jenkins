@@ -1,8 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'ubuntu'
-            label 'build-server'
+            image 'buildpack-deps:latest'
             args '--privileged'
         }
     }
@@ -18,6 +17,13 @@ pipeline {
                     sh 'make'
                     sh 'make install'
                 }
+            }
+        }
+        stage('Copy nginx configuration') {
+            steps {
+                sh 'mkdir -p /usr/local/nginx/conf'
+                sh 'cp /path/to/nginx.conf /usr/local/nginx/conf/'
+                // Repeat for any additional configuration files
             }
         }
         stage('Build docker image') {
