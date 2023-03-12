@@ -1,31 +1,22 @@
 pipeline {
-    agent {
-        any {
-            image 'centos:centos8'
-            args '-p 80:80'
-            args '--user=root'
-        }
-    }
+    agent any
     stages {
-        stage('Checkout') {
+        stage('Build in docker') {
             steps {
-                checkout scm
+                script {
+                    docker.image('machimachi/docker-node-with-chrome').inside('--privileged -v /tmp:/tmp') {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
             }
         }
-        stage('Build') {
+
+        stage('deploy') {
             steps {
-                sh 'dnf -y update'
-                sh 'dnf -y install nginx'
-                sh 'mkdir -p /etc/nginx/conf.d'
-                sh 'cp conf/jenkins.conf /etc/nginx/conf.d/jenkins.conf'
-                sh 'cp conf/nginx.conf /etc/nginx/nginx.conf'
+                sh 'docker rm -f jenkins-test'
+                sh 'docker run --rm -v $WORKSPACE/dist/jenkins-test:/usr/share/nginx/html -p 8081:80 --name jenkins-test -d nginx:alpine'
             }
-        }
-    }
-    post {
-        always {
-            sh 'nginx -t' // Test the configuration
-            sh 'nginx' // Start NGINX
         }
     }
 }
