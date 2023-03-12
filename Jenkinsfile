@@ -21,6 +21,7 @@ pipeline {
                     sh 'cd nginx-1.20.2 && ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_v2_module &&  make &&  make install'
                     sh 'git config --global user.email "pwork7091@gmail.com"'
                     sh 'git config --global user.name "Jenkins"'
+                    sh 'git config --global --add safe.directory /var/jenkins_home/workspace/cd'
                     sh 'git init'
                     sh 'git add .'
                     sh 'git commit -m "Add compiled nginx binary"'
