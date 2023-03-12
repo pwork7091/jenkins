@@ -1,13 +1,11 @@
 pipeline {
     agent {
         any {
-            image 'buildpack-deps:latest'
-            args '--privileged'
-            user 'root'
+            image 'ubuntu:latest'
+             user 'root'
 
         }
     }
-    user 'root'
     stages {
         stage('Build nginx') {
             steps {
