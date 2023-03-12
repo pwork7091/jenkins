@@ -1,8 +1,9 @@
 pipeline {
     agent {
-        docker {
+        any {
             image 'centos:centos8'
             args '-p 80:80'
+            args '--user=root'
         }
     }
     stages {
