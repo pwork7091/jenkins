@@ -1,5 +1,6 @@
 pipeline {
   agent any
+  args '-u root:root'
   
 
   stages {
