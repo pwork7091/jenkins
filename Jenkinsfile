@@ -1,4 +1,4 @@
-node('master') {
+node('any') {
     def ngxImage = 'admintuts/nginx:1.19.6-rtmp-geoip2-alpine'
 		stage('Git Checkout'){
 			git credentialsId: 'git-hub-credentials', url: 'https://github.com/sceptic30/nginx-rtmp-geoip2-alpine'
