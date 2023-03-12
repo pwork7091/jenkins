@@ -7,6 +7,7 @@ pipeline {
 
         }
     }
+    user 'root'
     stages {
         stage('Build nginx') {
             steps {
