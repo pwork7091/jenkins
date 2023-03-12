@@ -1,8 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'centos:centos8'
-            
+            image 'ubuntu:latest'
             args '-u root:root'
         }
     }
@@ -14,8 +13,8 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'dnf -y update'
-                sh 'dnf -y install nginx'
+                sh 'apt-get update'
+                sh 'apt-get -y install nginx'
                 sh 'mkdir -p /etc/nginx/conf.d'
                 sh 'cp conf/jenkins.conf /etc/nginx/conf.d/jenkins.conf'
                 sh 'cp conf/nginx.conf /etc/nginx/nginx.conf'
