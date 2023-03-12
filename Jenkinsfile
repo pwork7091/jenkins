@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Build nginx') {
             steps {
+                sh "chmod +x -R ${env.WORKSPACE}"
                 sh 'docker build -t nginx-build -f Dockerfile.build .'
             }
         }
