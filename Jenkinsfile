@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Build nginx') {
             steps {
-                sh 'apt-get update'
+                sh 'sudo apt-get update'
                 sh 'apt-get install -y build-essential wget'
                 sh 'wget http://nginx.org/download/nginx-1.20.1.tar.gz'
                 sh 'tar -xvf nginx-1.20.1.tar.gz'
