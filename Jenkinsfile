@@ -1,8 +1,9 @@
 pipeline {
     agent {
-        docker {
+        any {
             image 'ubuntu:latest'
             label 'docker'
+            args '--user=root'
         }
     }
     stages {
