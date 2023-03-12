@@ -1,56 +1,43 @@
 pipeline {
-    agent any
+    agent {
+        any {
+            image 'buildpack-deps:latest'
+            args '--privileged'
+        }
+    }
     stages {
-        stage('Build Nginx') {
+        stage('Build nginx') {
             steps {
-                sh 'apt-get update'
-                sh 'apt-get install -y build-essential wget'
+                sh 'sudo apt-get update'
+                sh 'sudo apt-get install -y build-essential wget'
                 sh 'wget http://nginx.org/download/nginx-1.20.1.tar.gz'
                 sh 'tar -xvf nginx-1.20.1.tar.gz'
                 dir('nginx-1.20.1') {
                     sh './configure --prefix=/usr/local/nginx --with-http_ssl_module'
                     sh 'make'
-                    sh 'make install'
+                    sh 'sudo make install'
                 }
             }
         }
         stage('Copy nginx configuration') {
             steps {
-                sh 'mkdir -p /usr/local/nginx/conf'
-                sh 'cp /path/to/nginx.conf /usr/local/nginx/conf/'
+                sh 'sudo mkdir -p /usr/local/nginx/conf'
+                sh 'sudo cp /path/to/nginx.conf /usr/local/nginx/conf/'
                 // Repeat for any additional configuration files
             }
         }
         stage('Build docker image') {
             steps {
-                sh 'docker build -t mynginx .'
+                sh 'sudo docker build -t my-nginx .'
             }
         }
-        stage('Create Production Container') {
+        stage('Create production container') {
             steps {
-                sh 'docker run -d --name mynginxcontainer mynginx'
-                sh 'docker cp /path/to/static/html mynginxcontainer:/usr/share/nginx/html'
-                sh 'docker commit mynginxcontainer mynginxprod'
-                sh 'docker rm -f mynginxcontainer'
+                sh 'sudo docker run -d --name my-nginx-container my-nginx'
+                sh 'sudo docker cp /path/to/static/html my-nginx-container:/usr/share/nginx/html'
+                sh 'sudo docker commit my-nginx-container my-nginx-prod'
+                sh 'sudo docker rm -f my-nginx-container'
             }
-        }
-        stage('Run Container') {
-            steps {
-                sh 'docker run -d --name mynginxprodcontainer -p 80:80 mynginxprod'
-            }
-        }
-        stage('Test Container') {
-            steps {
-                sh 'curl localhost'
-            }
-        }
-    }
-    post {
-        failure {
-            sh 'docker rm -f mynginxprodcontainer'
-        }
-        always {
-            sh 'docker rm -f mynginxprodcontainer'
         }
     }
 }
