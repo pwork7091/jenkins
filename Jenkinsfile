@@ -13,11 +13,20 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'apt-get update'
-                sh 'apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlib1g-dev curl'
-                sh 'curl -O http://nginx.org/download/nginx-1.20.2.tar.gz'
-                sh 'tar -zxvf nginx-1.20.2.tar.gz'
-                sh 'cd nginx-1.20.2 && ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_v2_module && make &&  make install'
+                withCredentials([usernamePassword(credentialsId: '6df1b4e3-8fa2-42a7-b986-05448846473a', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sh 'apt-get update'
+                    sh 'apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlib1g-dev curl'
+                    sh 'curl -O http://nginx.org/download/nginx-1.20.2.tar.gz'
+                    sh 'tar -zxvf nginx-1.20.2.tar.gz'
+                    sh 'cd nginx-1.20.2 && sudo ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_v2_module && sudo make && sudo make install'
+                    sh 'git config --global user.email "pwork7091@gmail.com"'
+                    sh 'git config --global user.name "Jenkins"'
+                    sh 'git init'
+                    sh 'git add .'
+                    sh 'git commit -m "Add compiled nginx binary"'
+                    sh "git remote add origin https://${USERNAME}:${PASSWORD}@github.com/myuser/myrepo.git"
+                    sh 'git push origin master'
+                }
             }
         }
     }
