@@ -3,6 +3,8 @@ pipeline {
         any {
             image 'buildpack-deps:latest'
             args '--privileged'
+            user 'root'
+
         }
     }
     stages {
