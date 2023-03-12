@@ -1,25 +1,31 @@
 pipeline {
-  agent any
-  args '-u root:root'
-  
-
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    agent {
+        docker {
+            image 'centos:centos8'
+            
+            args '-u root:root'
+        }
     }
-    stage('Build') {
-      steps {
-        sh ' apt-get update && apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev zlib1g-dev -u root:root'
-        sh './configure'
-        sh 'make'
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'dnf -y update'
+                sh 'dnf -y install nginx'
+                sh 'mkdir -p /etc/nginx/conf.d'
+                sh 'cp conf/jenkins.conf /etc/nginx/conf.d/jenkins.conf'
+                sh 'cp conf/nginx.conf /etc/nginx/nginx.conf'
+            }
+        }
     }
-    stage('Install') {
-      steps {
-        sh 'make install'
-      }
+    post {
+        always {
+            sh 'nginx -t' // Test the configuration
+            sh 'nginx' // Start NGINX
+        }
     }
-  }
 }
