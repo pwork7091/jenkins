@@ -21,10 +21,4 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            sh 'nginx -t' // Test the configuration
-            sh 'nginx' // Start NGINX
-        }
-    }
 }
