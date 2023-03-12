@@ -17,7 +17,7 @@ pipeline {
                 sh 'apt-get install -y build-essential libpcre3 libpcre3-dev libssl-dev curl'
                 sh 'curl -O http://nginx.org/download/nginx-1.20.2.tar.gz'
                 sh 'tar -zxvf nginx-1.20.2.tar.gz'
-                sh 'cd nginx-1.20.2 && sudo ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_v2_module && sudo make && sudo make install'
+                sh 'cd nginx-1.20.2 && ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_v2_module && make && sudo make install'
             }
         }
     }
