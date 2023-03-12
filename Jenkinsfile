@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker {
+        any {
             image 'buildpack-deps:latest'
             args '--privileged'
         }
